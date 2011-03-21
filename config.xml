@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" version="0.0131" id="extension:operall">
+	<name>OperaLL</name>
+	<description>Opera extension for a website that doesn't exist</description>
+	<author href="http://endoftheinter.net/profile.php?user=18394">chairface</author>
+	<icon src="OperaLL.png"/>
+	<access origin="http://endoftheinter.net" subdomains="true"/>
+	<access origin="https://endoftheinter.net" subdomains="true"/>
+	<update-description href="http://chairface.org/ext/opera/opera-ud.xml"/>
+</widget>

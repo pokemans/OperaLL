@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+       window.addEventListener("load", function(){
+        var theButton;
+        var ToolbarUIItemProperties = {
+          title: "OperaLL",
+          icon: "OperaLL.png",
+          popup: {
+            href: "popup.html",
+            width: 210,
+            height: 230
+          }
+        }
+        theButton = opera.contexts.toolbar.createItem(ToolbarUIItemProperties);
+        opera.contexts.toolbar.addItem(theButton);
+      }, false);
+	opera.extension.onmessage = function(event) {
+		event.source.postMessage(window.localStorage.getItem(event.data));
+		//window.opera.postError('Message received. Event source: ' + event.source + ' data: ' + event.data);
+	}
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

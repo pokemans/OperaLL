@@ -1,0 +1,93 @@
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+<script type="text/javascript">
+chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    //console.log(sender.tab ?
+    //            "from a content script:" + sender.tab.url :
+    //            "from the extension");
+      if(request.need.split(':').indexOf('userid') == 0){
+      		//console.log(request.need);
+      		//console.log(localStorage['chromeLL_extra']);
+      		sendResponse({data: "userid-"});
+      }
+      else if(request.need == "notify"){
+            var notification = webkitNotifications.createNotification(
+            'images/ll.png',
+            request.title,
+            request.message);
+            notification.show();
+        }
+      else if(request.need == "cfapi"){
+      		if(request.action == "update"){
+			$.post("http://chat.chairface.org/api/1/?api=update", { chat_cid: request.cookie }, function(req){
+				sendResponse({data: req});
+			});
+		}
+		if(request.action == "list"){
+			$.get("http://chat.chairface.org/api/1/?api=userlist", function(req){
+				sendResponse({data: req});
+			});
+		}
+		if(request.action == "send"){
+			$.post("http://chat.chairface.org/api/1/?api=send", { to: request.to, msg: request.message }, function(req){
+				sendResponse({data: "posted"});
+			});
+		}
+		if(request.action == "get"){
+			$.get("http://chat.chairface.org/api/1/?api=getmsg", function(req){
+				sendResponse({data: req});
+			});
+		}
+     }
+     else if(request.need == "topic_userhl"){
+     try{
+        if(localStorage['chromeLL_userhighlight'] == undefined){
+            localStorage['chromeLL_userhighlight'] = '';
+        }
+        var over = localStorage['chromeLL_userhighlight'].split(';');
+        var users = Array();
+        var colors = Array();
+        var texts = Array();
+        for(var i = 0; over[i]; i++){
+            users[i] = over[i].split(':')[0];
+            colors[i] = over[i].split(':')[1];
+            texts[i] = over[i].split(':')[2];
+        }
+        var found = false;
+        for(var i = 0; users[i]; i++){
+            if(request.user.toLowerCase() == users[i]){
+                if(request.rm == 'true'){
+                    users[i] = '';
+                }else{
+                    colors[i] = request.color;
+                }
+                found = true;
+            }
+        }
+        if(!found && request.rm != 'true'){
+            var len = users.length;
+            users[len] = request.user.toLowerCase();
+            colors[len] = request.color;
+            texts[len] = '';
+        }
+        var ls = '';
+        for(var i = 0; users[i] != undefined; i++){
+            if(users[i] != ''){
+                ls += users[i] + ':' + colors[i] + ':' + texts[i] + ';';
+            }
+        }
+        localStorage['chromeLL_userhighlight'] = ls;
+        sendResponse({data: 'true'});
+    }catch(e){
+        sendResponse({data: e});
+    }
+    }
+    else{
+      	sendResponse({data: localStorage[request.need]});
+    }
+  });
+</script>
+</head>
+</html>
